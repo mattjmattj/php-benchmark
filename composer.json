@@ -1,0 +1,32 @@
+{
+	"name": "mattjmattj/php-benchmark",
+	"description": "Benchmarking utilities for PHP",
+	"homepage": "http://github.com/mattjmattj/php-benchmark",
+	"license": "THE BEERWARE LICENSE",
+	"version": "0.1.0",
+	"type": "library",
+	"authors": [{
+		"name": "Matthias Jouan",
+		"email": "matthias.jouan@gmail.com",
+		"homepage": "http://blog.mjouan.fr",
+		"role": "Developer"
+	}],
+	"keywords": [
+		"benchmark",
+		"time"
+	],
+	"scripts": {
+		"test": "vendor/bin/phpunit"
+	},
+	"require": {
+		"php": ">=5.5.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "4.3.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Benchmark\\": "lib"
+		}
+	}
+}
