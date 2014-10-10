@@ -66,7 +66,7 @@ $withForeach = function (\Closure $begin, \Closure $end) use ($mappingFunction) 
 	$begin();
 	
 	$res = [];
-	foreach ($data as $value) {
+	foreach ($data as $key => $value) {
 		$res[$key] = $mappingFunction($value);
 	}
 	
@@ -92,8 +92,8 @@ $withArrayIterator = function (\Closure $begin, \Closure $end) use ($mappingFunc
 	$data = createData();
 	$begin();
 	
-	$obj = new ArrayIterator($data);
-	$ite = $obj->getIterator();
+	$obj = new ArrayObject($data);
+	$iterator = $obj->getIterator();
 	$res = [];
 	while($iterator->valid()) {
 		$res[$iterator->key()] = $mappingFunction($iterator->current());
@@ -111,6 +111,7 @@ $benchmark = new TimeBenchmark([$withNativeArrayMap, $withForeach, $withArrayWal
 echo "Mapping an array of 10000 elements 500 times : \n";
 
 // result output, generator version
+/*
 $benchmark->runGenerator()->next();
 report('native implementation', $benchmark->runGenerator()->current());
 
@@ -122,13 +123,11 @@ report('array_walk implementation', $benchmark->runGenerator()->current());
 
 $benchmark->runGenerator()->next();
 report('ArrayIterator implementation', $benchmark->runGenerator()->current());
-
-/*
+*/
 // result output, standard version
 $benchmark->run();
 $results = $benchmark->getRawResults();
-report('native implementation', results[0]);
-report('foreach implementation', results[1]);
-report('array_walk implementation', results[2]);
-report('ArrayIterator implementation', results[3]);
-*/
+report('native implementation', $results[0]);
+report('foreach implementation', $results[1]);
+report('array_walk implementation', $results[2]);
+report('ArrayIterator implementation', $results[3]);
