@@ -23,29 +23,6 @@ function createData() {
 	return $data;
 }
 
-function standard_deviation($values) {
-	$mean = array_sum($values) / count($values);
-	$variance = 0.0;
-	foreach ($values as $value) {
-		$variance += ($value - $mean) * ($value - $mean);
-	}
-	$variance /= count($values);
-	return sqrt($variance);
-}
-
-/**
- * Outputs the results
- */ 
-function report ($statement, $results) {
-	echo "$statement\n=====================\n";
-	printf("  min     : %.3f seconds\n", min($results));
-	printf("  max     : %.3f seconds\n", max($results));
-	printf("  average : %.3f seconds\n", (array_sum($results)/count($results)));
-	printf("  median  : %.3f seconds\n", $results[round(count($results) / 2) - 1]);
-	printf("  sd      : %.3f seconds\n", standard_deviation($results));
-	echo "\n";
-}
-
 /**
  * This Closure uses the native array_map
  */ 
@@ -88,6 +65,9 @@ $withArrayWalk = function (\Closure $begin, \Closure $end) use ($mappingFunction
 	$end();
 };
 
+/**
+ * This Closure uses ArrayIterator
+ */ 
 $withArrayIterator = function (\Closure $begin, \Closure $end) use ($mappingFunction) {
 	$data = createData();
 	$begin();
@@ -101,33 +81,22 @@ $withArrayIterator = function (\Closure $begin, \Closure $end) use ($mappingFunc
 	}
 	
 	$end();
-	
 };
 
+$benchmark = new TimeBenchmark([
+	$withNativeArrayMap, 
+	$withForeach, 
+	$withArrayWalk, 
+	$withArrayIterator
+], 50);
 
-//MAIN
-$benchmark = new TimeBenchmark([$withNativeArrayMap, $withForeach, $withArrayWalk, $withArrayIterator], 500);
-
-echo "Mapping an array of 10000 elements 500 times : \n";
-
-// result output, generator version
-/*
-$benchmark->runGenerator()->next();
-report('native implementation', $benchmark->runGenerator()->current());
-
-$benchmark->runGenerator()->next();
-report('foreach implementation', $benchmark->runGenerator()->current());
-
-$benchmark->runGenerator()->next();
-report('array_walk implementation', $benchmark->runGenerator()->current());
-
-$benchmark->runGenerator()->next();
-report('ArrayIterator implementation', $benchmark->runGenerator()->current());
-*/
-// result output, standard version
 $benchmark->run();
-$results = $benchmark->getRawResults();
-report('native implementation', $results[0]);
-report('foreach implementation', $results[1]);
-report('array_walk implementation', $results[2]);
-report('ArrayIterator implementation', $results[3]);
+
+$distributions = $benchmark->getResultsDistribution(3, 0, 0.03);
+
+return [
+	'array_map' => $distributions[0],
+	'foreach' => $distributions[1],
+	'array_walk' => $distributions[2],
+	'ArrayIterator' => $distributions[3],
+];
