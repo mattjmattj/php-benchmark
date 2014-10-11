@@ -10,7 +10,7 @@ namespace Benchmark;
  * Utility class to benchmark execution time of several functions.
  * Ideally used when benchmarking several implementations of the function.
  */
-class TimeBenchmark {
+class TimeBenchmark extends AbstractBenchmark {
 
 	/**
 	 * @var int - number of iterations to perform
@@ -22,10 +22,6 @@ class TimeBenchmark {
 	 */
 	private $functions;
 	
-	/**
-	 * @var array
-	 */ 
-	private $results;
 
 	/**
 	 * @param Closure[] - functions to call. Each Closure must accept a 'begin' and a 'end' callback, and call them around the code to benchmark
@@ -33,10 +29,6 @@ class TimeBenchmark {
 	public function __construct (array $functions, $iterations = 100) {
 		$this->iterations = $iterations;
 		$this->functions = $functions;
-	}
-
-	private function initResults () {
-		$this->results = [];
 	}
 	
 	private function benchmarkFunction (\Closure $function) {
@@ -90,11 +82,5 @@ class TimeBenchmark {
 		}
 	}
 	
-	/**
-	 * @return array - the actual results, untreated
-	 */ 
-	public function getRawResults () {
-		return $this->results;
-	}
 	
 }
