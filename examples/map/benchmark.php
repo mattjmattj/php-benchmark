@@ -4,6 +4,7 @@
  */ 
  
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once 'implementations.php';
  
 use Benchmark\TimeBenchmark;
 
@@ -23,80 +24,48 @@ function createData() {
 	return $data;
 }
 
-/**
- * This Closure uses the native array_map
- */ 
-$withNativeArrayMap = function (callable $begin, callable $end) use ($mappingFunction) {
-	$data = createData();
-	$begin();
-	
-	$res = array_map($mappingFunction, $data);
-	
-	$end();
-};
-
-/**
- * This Closure uses a foreach structure to loop-and-map the array 
- */ 
-$withForeach = function (callable $begin, callable $end) use ($mappingFunction) {
-	$data = createData();
-	$begin();
-	
-	$res = [];
-	foreach ($data as $key => $value) {
-		$res[$key] = $mappingFunction($value);
-	}
-	
-	$end();
-};
-
-/**
- * This Closure uses array_walk to loop-and-map the array 
- */ 
-$withArrayWalk = function (callable $begin, callable $end) use ($mappingFunction) {
-	$data = createData();
-	$begin();
-	
-	$res = [];
-	array_walk($data, function($value,$key) use ($res, $mappingFunction) {
-		$res[$key] = $mappingFunction($value);
-	});
-	
-	$end();
-};
-
-/**
- * This Closure uses ArrayIterator
- */ 
-$withArrayIterator = function (callable $begin, callable $end) use ($mappingFunction) {
-	$data = createData();
-	$begin();
-	
-	$obj = new ArrayObject($data);
-	$iterator = $obj->getIterator();
-	$res = [];
-	while($iterator->valid()) {
-		$res[$iterator->key()] = $mappingFunction($iterator->current());
-		$iterator->next();
-	}
-	
-	$end();
-};
-
 $benchmark = new TimeBenchmark([
-	$withNativeArrayMap, 
-	$withForeach, 
-	$withArrayWalk, 
-	$withArrayIterator
+	function($begin, $end) use ($mappingFunction) {
+		$data = createData();
+		$begin();
+		withArrayIterator($data, $mappingFunction);
+		$end();
+	}, 
+	function($begin, $end) use ($mappingFunction) {
+		$data = createData();
+		$begin();
+		withArrayWalk($data, $mappingFunction);
+		$end();
+	}, 
+	function($begin, $end) use ($mappingFunction) {
+		$data = createData();
+		$begin();
+		withParkourMap($data, $mappingFunction);
+		$end();
+	}, 
+	function($begin, $end) use ($mappingFunction) {
+		$data = createData();
+		$begin();
+		withNativeArrayMap($data, $mappingFunction);
+		$end();
+	},
+	function($begin, $end) use ($mappingFunction) {
+		$data = createData();
+		$begin();
+		withForeach($data, $mappingFunction);
+		$end();
+	},
+	
 ], 50);
 
 $benchmark->run();
 
-$distributions = $benchmark->getResultsDistribution(3, 0, 0.03);
+$results = $benchmark->getRawResults();
 
 return [
-	'array_map' => $distributions[0],
-	'foreach' => $distributions[1],
-	'array_walk' => $distributions[2],
-	'ArrayIterator' => $distributions[3],
+	'ArrayIterator' => $results[0],
+	'array_walk' => $results[1],
+	'Parkour::map' => $results[2],
+	'array_map' => $results[3],
+	'foreach' => $results[4],
 ];

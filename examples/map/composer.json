@@ -1,0 +1,11 @@
+{
+    "repositories" :  [
+        {
+            "url": "https://github.com/felixgirault/parkour.git",
+            "type": "git"
+        }
+    ],
+    "require" : {
+        "fg/parkour" : "dev-master"
+    }
+}

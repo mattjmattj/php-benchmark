@@ -17,8 +17,16 @@ $distributions = require('benchmark.php');
 	</head>
 	<body>
 		<h1>Demo page for php-benchmark : various array_map implementations</h1>
-		<h2>Distribution</h2>
 		<div id="chart"></div>
+		<div>
+			<pre>
+				<code>
+<?php
+echo htmlentities(file_get_contents(__DIR__.'/implementations.php'));
+?>
+				</code>
+			</pre>
+		</div>
 		<script type="text/javascript">
 		$(function () {
 			$('#chart').highcharts({
@@ -26,11 +34,11 @@ $distributions = require('benchmark.php');
 					type: 'spline'
 				},
 				title: {
-					text: 'Distribution',
+					text: 'Execution time of various array_map implementations, for mapping 10000 values',
 				},
 				xAxis: {
 					title: {
-						text: 'Time'
+						text: 'Iterations'
 					},
 					labels: {
 						formatter: function () {
@@ -40,7 +48,7 @@ $distributions = require('benchmark.php');
 				},
 				yAxis: {
 					title: {
-						text: 'Count'
+						text: 'Time (s)'
 					},
 					min: 0
 				},
@@ -59,6 +67,10 @@ foreach ($distributions as $name => $distribution) {
 		'data' => []
 	];
 	foreach ($distribution as $k => $v) {
+	
+		//we kick too big values away
+		if ($v > 0.05) continue;
+	
 		$serie['data'][] = [$k,$v];
 	}
 	
