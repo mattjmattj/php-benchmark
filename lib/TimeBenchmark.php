@@ -18,20 +18,20 @@ class TimeBenchmark extends AbstractBenchmark {
 	private $iterations;
 	
 	/**
-	 * @var Closure[] - array of functions to benchmark
+	 * @var callable[] - array of functions to benchmark
 	 */
 	private $functions;
 	
 
 	/**
-	 * @param Closure[] - functions to call. Each Closure must accept a 'begin' and a 'end' callback, and call them around the code to benchmark
+	 * @param callable[] - functions to call. Each callable must accept a 'begin' and a 'end' callback, and call them around the code to benchmark
 	 */ 
 	public function __construct (array $functions, $iterations = 100) {
 		$this->iterations = $iterations;
 		$this->functions = $functions;
 	}
 	
-	private function benchmarkFunction (\Closure $function) {
+	private function benchmarkFunction (callable $function) {
 		$results = [];
 		
 		$nb = $this->iterations;

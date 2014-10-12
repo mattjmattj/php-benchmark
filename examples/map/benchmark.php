@@ -26,7 +26,7 @@ function createData() {
 /**
  * This Closure uses the native array_map
  */ 
-$withNativeArrayMap = function (\Closure $begin, \Closure $end) use ($mappingFunction) {
+$withNativeArrayMap = function (callable $begin, callable $end) use ($mappingFunction) {
 	$data = createData();
 	$begin();
 	
@@ -38,7 +38,7 @@ $withNativeArrayMap = function (\Closure $begin, \Closure $end) use ($mappingFun
 /**
  * This Closure uses a foreach structure to loop-and-map the array 
  */ 
-$withForeach = function (\Closure $begin, \Closure $end) use ($mappingFunction) {
+$withForeach = function (callable $begin, callable $end) use ($mappingFunction) {
 	$data = createData();
 	$begin();
 	
@@ -53,7 +53,7 @@ $withForeach = function (\Closure $begin, \Closure $end) use ($mappingFunction) 
 /**
  * This Closure uses array_walk to loop-and-map the array 
  */ 
-$withArrayWalk = function (\Closure $begin, \Closure $end) use ($mappingFunction) {
+$withArrayWalk = function (callable $begin, callable $end) use ($mappingFunction) {
 	$data = createData();
 	$begin();
 	
@@ -68,7 +68,7 @@ $withArrayWalk = function (\Closure $begin, \Closure $end) use ($mappingFunction
 /**
  * This Closure uses ArrayIterator
  */ 
-$withArrayIterator = function (\Closure $begin, \Closure $end) use ($mappingFunction) {
+$withArrayIterator = function (callable $begin, callable $end) use ($mappingFunction) {
 	$data = createData();
 	$begin();
 	
